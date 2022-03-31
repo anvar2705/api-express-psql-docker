@@ -18,7 +18,7 @@ class UserController {
     // return res.json({ username })
     const candidate = await User.findOne({ where: { username } })
     if (candidate) {
-      return next(ApiError.clientError(451, 'This user already exists'))
+      return next(ApiError.clientError(460, 'This user already exists'))
     }
     const hashPassword = bcrypt.hashSync(password, 5)
     const user = await User.create({ username, password: hashPassword, role })
@@ -29,11 +29,11 @@ class UserController {
     const { username, password } = req.body
     const user = await User.findOne({ where: { username } })
     if (!user) {
-      return next(ApiError.clientError(452, 'User does not exist'))
+      return next(ApiError.clientError(461, 'User does not exist'))
     }
     const validPassword = bcrypt.compareSync(password, user.password)
     if (!validPassword) {
-      return next(ApiError.clientError(453, 'Wrong password'))
+      return next(ApiError.clientError(462, 'Wrong password'))
     }
     const token = generateJwt(user.id, user.username, user.role)
     return res.json({ token, username: user.username })
