@@ -18,7 +18,7 @@ class MovieController {
       for (let country of countries) {
         const foundCountry = await Country.findOne({ where: { value: country } })
         if (foundCountry) {
-          createdMovie.addCountry(foundCountry)
+          await createdMovie.addCountry(foundCountry)
         }
       }
     }
@@ -26,7 +26,7 @@ class MovieController {
       for (let genre of genres) {
         const foundGenre = await Genre.findOne({ where: { value: genre } })
         if (foundGenre) {
-          createdMovie.addGenre(foundGenre)
+          await createdMovie.addGenre(foundGenre)
         }
       }
     }
