@@ -1,9 +1,8 @@
 const { validationResult } = require('express-validator')
-const ApiError = require('../error/ApiError')
 const { Country } = require('../models/models')
 const { Movie } = require('../models/models')
 const { Genre } = require('../models/models')
-const getAllItemsOrById = require('../utils/getAllItemsOrById')
+const { Comment } = require('../models/models')
 
 class MovieController {
   async create(req, res) {
@@ -37,10 +36,10 @@ class MovieController {
   async get(req, res) {
     const { id } = req.query
     if (!id) {
-      const allMovies = await Movie.findAll({ include: [Genre, Country] })
+      const allMovies = await Movie.findAll({ include: [Genre, Country, Comment] })
       return res.json(allMovies)
     }
-    const movie = await Movie.findOne({ where: { id }, include: [Genre, Country] })
+    const movie = await Movie.findOne({ where: { id }, include: [Genre, Country, Comment] })
     return res.json(movie)
   }
 }
