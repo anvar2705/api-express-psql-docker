@@ -1,5 +1,4 @@
 const { validationResult } = require('express-validator')
-const jwt = require('jsonwebtoken')
 const { Comment } = require('../models/models')
 const { Movie, User } = require('../models/models')
 const ApiError = require('../error/ApiError')
