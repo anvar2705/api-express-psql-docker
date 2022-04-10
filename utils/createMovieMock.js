@@ -21,14 +21,14 @@ const createMovieMock = async (name, description, image, countries, genres, comm
       }
     }
 
-    //add comments
+    //add comments just for mock data
     if (comments.length !== 0) {
-      const user1 = await User.findOne({ where: { id: 2 } })
+      const users = await User.findAll()
 
-      for (let comment of comments) {
+      for (let [index, comment] of comments.entries()) {
         const createdComment = await Comment.create({ value: comment })
         await createdComment.setMovie(createdMovie)
-        await createdComment.setUser(user1)
+        await createdComment.setUser(users[index])
       }
     }
   }

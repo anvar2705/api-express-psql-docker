@@ -3,7 +3,6 @@ const { User } = require('../models/models')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const ApiError = require('../error/ApiError')
-const getAllItemsOrById = require('../utils/getAllItemsOrById')
 
 const generateJwt = (id, username, role) => {
   return jwt.sign({ id, username, role }, process.env.SECRET_KEY, { expiresIn: '24h' })
