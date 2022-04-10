@@ -24,6 +24,16 @@ class CommentController {
 
     return res.json(comment)
   }
+
+  async delete(req, res, next) {
+    const { id } = req.params
+    const userId = req.user.id
+    const comment = await Comment.findOne({ where: { id } })
+    if (userId === comment.userId) {
+      await Comment.destroy({ where: { id: comment.id } })
+      return res.json(comment)
+    } else return next(ApiError.clientError(463, "You don't have access"))
+  }
 }
 
 module.exports = new CommentController()

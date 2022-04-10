@@ -17,5 +17,6 @@ router.post(
   authMiddleware,
   commentController.create
 )
+router.delete('/:id', authMiddleware, commentController.delete)
 
 module.exports = router
