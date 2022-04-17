@@ -47,14 +47,28 @@ class UserController {
     return res.json({ token, username: user.username, id: user.id })
   }
 
-  async getUser(req, res) {
+  async getUser(req, res, next) {
     const { id } = req.query
     if (!id) {
-      return res.json(null)
+      return next(ApiError.clientError(464, 'There is not id in query'))
     }
     const user = await User.findOne({ where: { id } })
-    if (user) return res.json({ id: user.id, username: user.username })
-    return res.json(null)
+    if (!user) {
+      return next(ApiError.clientError(461, 'User does not exist'))
+    }
+    return res.json({ id: user.id, username: user.username })
+  }
+
+  async changeUsername(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: 'Request body is wrong', errors })
+    }
+    const { id } = req.user
+    const { username } = req.body
+    await User.update({ username }, { where: { id } })
+    const user = await User.findOne({ where: { id } })
+    return res.json({ id: user.id, username: user.username })
   }
 }
 

@@ -18,5 +18,15 @@ router.post(
 router.post('/login', userController.login)
 router.get('/auth', authMiddleware, userController.checkAuth)
 router.get('/', userController.getUser)
+router.post(
+  '/',
+  [
+    check('username', 'Username must not be empty or contain spaces')
+      .notEmpty()
+      .custom((value) => !/\s/.test(value)),
+  ],
+  authMiddleware,
+  userController.changeUsername
+)
 
 module.exports = router
