@@ -1,8 +1,10 @@
+const { Op } = require('sequelize')
 const { validationResult } = require('express-validator')
 const { Country } = require('../models/models')
 const { Movie } = require('../models/models')
 const { Genre } = require('../models/models')
 const { Comment } = require('../models/models')
+const ApiError = require('../error/ApiError')
 
 class MovieController {
   async create(req, res) {
@@ -33,14 +35,21 @@ class MovieController {
     const movie = await Movie.findOne({ where: { id: createdMovie.id }, include: [Genre, Country] })
     res.json(movie)
   }
-  async get(req, res) {
-    const { id } = req.query
-    if (!id) {
+  async get(req, res, next) {
+    const { id, search } = req.query
+    if (!id && !search) {
       const allMovies = await Movie.findAll({ include: [Genre, Country, Comment] })
       return res.json(allMovies)
     }
-    const movie = await Movie.findOne({ where: { id }, include: [Genre, Country, Comment] })
-    return res.json(movie)
+    if (id && search) {
+      return next(ApiError.clientError(465, "id & search can't be used together in query params"))
+    }
+    if (id) {
+      const movie = await Movie.findOne({ where: { id }, include: [Genre, Country, Comment] })
+      return res.json(movie)
+    }
+    const foundMovies = await Movie.findAll({ where: { name: { [Op.like]: `%${search}%` } } })
+    return res.json(foundMovies)
   }
 }
 
