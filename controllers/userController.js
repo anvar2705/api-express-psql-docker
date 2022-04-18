@@ -68,7 +68,8 @@ class UserController {
     const { username } = req.body
     await User.update({ username }, { where: { id } })
     const user = await User.findOne({ where: { id } })
-    return res.json({ id: user.id, username: user.username })
+    const token = generateJwt(user.id, user.username, user.role)
+    return res.json({ id: user.id, username: user.username, token })
   }
 }
 
