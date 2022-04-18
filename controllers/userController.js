@@ -59,13 +59,17 @@ class UserController {
     return res.json({ id: user.id, username: user.username })
   }
 
-  async changeUsername(req, res) {
+  async changeUsername(req, res, next) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: 'Request body is wrong', errors })
     }
     const { id } = req.user
     const { username } = req.body
+    const checkDuplicateUsernames = await User.findOne({ where: { username } })
+    if (checkDuplicateUsernames) {
+      return next(ApiError.clientError(460, 'The username is already taken'))
+    }
     await User.update({ username }, { where: { id } })
     const user = await User.findOne({ where: { id } })
     const token = generateJwt(user.id, user.username, user.role)
